@@ -35,15 +35,22 @@ public:
 	friend ostream & operator<<(ostream, &os, Account, &acc);
 
 };
-
+long Account::NextAccountNumber = 0;
 
 class Bank {
 private:
 	map<long , Account>accounts;
 public:
 	Bank();
+	Account OpenAccount(string fname, string lname float balance );
+	Account BalanceEnquiry(long accountNumber);
+	Account Deposit(long accountNumber, float amount);
+	Account Withdraw(long accountNumber, float amount);
+	void CloseAccount(long accountNumber);
+	void ShowAllAccounts();
+	~Bank();
 
-}
+};
 
 int main() {
 	return 0;
@@ -116,4 +123,71 @@ ostream & operator<<(ostream &os , Account &acc) {
 	os << "Account Number: " << acc.getAccNo() << endl;
 	os << "Balance: " << acc.getBalance() << endl;
 	return os;
+}
+
+
+
+//// bank class functions////////////////////
+Bank::Bank() {
+	Account account;
+	ifstream infile;
+	infile.open("Bank.data");
+	if (!infile) {
+		return ;
+	}
+
+	while (!infile.eof()) {
+		infile >> account; //this is for cheching input in order of the file
+		accounts.insert(pair<long , Account>(account.getAccNo(), account));
+
+	}
+
+	Account::setLastAccountNumber(account.getAccNo());
+	infile.close();
+}
+
+Account Bank:: OpenAccount(string fname, string lname, float balance) {
+	ofstream outfile;
+	Account account(fname , lname, balance);
+	accounts.insert(pair<long , Account>(account.getAccNo(), account));
+	outfile.open("Bank.data", ios::trunc);
+	for (auto it = accounts.begin(); it! -accounts.end(); it++) {
+		outfile << itr->second;
+	}
+	outfile.close();
+	return account;
+}
+Account Bank::BalanceEnquiry(long accountNumber) {
+	auto it = accounts.find(accountNumber);
+	return it->second;
+}
+Account Bank::Deposit(long accountNumber, float amount) {
+	auto it = accounts.find(accountNumber);
+	it->second.Deposit(amout);
+	return it->second;
+}
+Account Bank::Withdraw(long accountNumber, float amount) {
+	auto it = accounts.find(accountNumber);
+	itr->second.Withdraw(amount);
+	return it->second;
+}
+
+void Bank::CloseAccount(long accountNumber) {
+	auto it = accounts.find(accountNumber);
+	cout << "YOUR ACCOUNT HAS BEEN DELETED" << it->second;
+	accounts.earse(accountNumber);
+
+}
+void Bank::ShowAllAccounts() {
+	for (auto it = accounts.begin(); it != accounts.end(); it++) {
+		cout << "Account " << it->first << endl << it->second << endl;
+	}
+}
+Bank::~Bank() {
+	ofstream outfile;
+	outfile.open("Bank.data", ios::trunc);
+	for (auto it = accounts.begin(); it != accounts.end(); it++) {
+		outfile << it->second;
+	}
+	outfile.close();
 }
